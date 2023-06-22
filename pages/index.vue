@@ -7,5 +7,10 @@
 </template>
 
 <script setup lang="ts">
-const testQuery = await useFetch('https://jsonplaceholder.typicode.com/posts');
+// const testQuery = await useFetch('https://jsonplaceholder.typicode.com/posts');
+
+const { $app } = useNuxtApp();
+
+$app.logger.log('123');
+const testQuery = await $app.api.postsAPI.get();
 </script>

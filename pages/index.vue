@@ -1,5 +1,9 @@
 <template>
-  <div>{{ testQuery }}</div>
+  <div>
+    <a-button type="primary">Primary Button</a-button>
+
+    {{ testQuery }}
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,7 @@
 module.exports = {
-  extends: ['plugin:vue/recommended', 'prettier'],
+  parser: 'vue-eslint-parser',
+
+  extends: ['@nuxtjs/eslint-config-typescript', 'prettier'],
 
   rules: {
     'vue/max-attributes-per-line': [0], // отключить максимальное количество атрибутов в одну строку

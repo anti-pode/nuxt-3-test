@@ -13,7 +13,7 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
 interface IRequestWrapper {
   request: Omit<Partial<Request>, 'body'> & { body?: BodyInit };
   param?: string;
-  query?: { [key: string]: string };
+  query?: { [key: string]: string | number };
   description?: string;
   data?: unknown;
 }
@@ -83,7 +83,7 @@ export default class AdapterService implements IAdapterService {
     }
   }
 
-  private buildEndpoint(param?: string, query?: { [key: string]: string }): string {
+  private buildEndpoint(param?: string, query?: { [key: string]: string | number }): string {
     let endpoint = this.API_BASE_URL + this.subdirectory;
 
     if (param) {
@@ -91,9 +91,17 @@ export default class AdapterService implements IAdapterService {
     }
 
     if (query) {
-      endpoint += `?${new URLSearchParams(query)}`;
+      endpoint += `?${new URLSearchParams(this.makeQueryString(query))}`;
     }
 
     return endpoint;
+  }
+
+  private makeQueryString(query: { [key: string]: string | number }): { [key: string]: string } {
+    return Object.entries(query).reduce((acc, [key, value]) => {
+      acc[key] = String(value);
+
+      return acc;
+    }, {} as { [key: string]: string });
   }
 }

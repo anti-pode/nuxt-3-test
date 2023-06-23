@@ -7,10 +7,8 @@
 </template>
 
 <script setup lang="ts">
-// const testQuery = await useFetch('https://jsonplaceholder.typicode.com/posts');
-
+import { useAsyncData } from '#app';
 const { $app } = useNuxtApp();
 
-$app.logger.log('123');
-const testQuery = await $app.api.postsAPI.get();
+const testQuery = await useAsyncData('posts', () => $app.api.postsAPI.get());
 </script>

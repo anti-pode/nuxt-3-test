@@ -10,9 +10,6 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
   }),
 };
 
-// TODO: брать из .env
-const API_URL = 'https://jsonplaceholder.typicode.com/';
-
 interface IRequestWrapper {
   request: Omit<Partial<Request>, 'body'> & { body?: BodyInit };
   param?: string;
@@ -35,10 +32,14 @@ export interface IAdapterService {
 @injectable()
 export default class AdapterService implements IAdapterService {
   subdirectory = '';
+  private readonly API_BASE_URL;
   readonly logger;
 
   constructor(@inject(TYPES.Logger) logger: ILoggerService) {
     this.logger = logger;
+
+    const config = useRuntimeConfig();
+    this.API_BASE_URL = config.public.apiBaseURL;
   }
 
   // TODO: добавить другие методы обработки запросов
@@ -64,7 +65,6 @@ export default class AdapterService implements IAdapterService {
 
     let response: Response;
     try {
-      // TODO: использовать useFetch, сейчас запрос снова отправляется при релоаде страницы
       response = await fetch(endpoint, request);
 
       if (!response.ok) {
@@ -84,7 +84,7 @@ export default class AdapterService implements IAdapterService {
   }
 
   private buildEndpoint(param?: string, query?: { [key: string]: string }): string {
-    let endpoint = API_URL + this.subdirectory;
+    let endpoint = this.API_BASE_URL + this.subdirectory;
 
     if (param) {
       endpoint += `/${param}`;

@@ -7,6 +7,7 @@ import LoggerService from '@/shared/api/services/logger.service';
 import ApiService from '@/shared/api/services/api.service';
 import PostsService from '@/shared/api/services/posts.service';
 import AdapterService from '@/shared/api/services/adapter.service';
+import CommentsService from '@/shared/api/services/comments.service';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind(TYPES.Application).to(AppService).inSingletonScope();
@@ -14,6 +15,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind(TYPES.API).to(ApiService).inSingletonScope();
   bind(TYPES.Adapter).to(AdapterService).inSingletonScope();
   bind(TYPES.PostsAPIModule).to(PostsService).inSingletonScope();
+  bind(TYPES.CommentsAPIModule).to(CommentsService).inSingletonScope();
 });
 
 export default defineNuxtPlugin({

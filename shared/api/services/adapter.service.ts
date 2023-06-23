@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+import { Ref } from 'vue';
 import { TYPES } from '~/shared/api/types/types';
 import { ILoggerService } from '~/shared/api/services/logger.service';
 
@@ -13,7 +14,7 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
 interface IRequestWrapper {
   request: Omit<Partial<Request>, 'body'> & { body?: BodyInit };
   param?: string;
-  query?: { [key: string]: string | number };
+  query?: { [key: string]: Ref<string | number> | string | number };
   description?: string;
   data?: unknown;
 }
@@ -26,7 +27,7 @@ interface IRequest extends IRequestWrapper {
 export interface IAdapterService {
   subdirectory: string;
 
-  requestJSON<T>(payload: IRequestWrapper): Promise<T>;
+  requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T>;
 }
 
 @injectable()
@@ -43,13 +44,14 @@ export default class AdapterService implements IAdapterService {
   }
 
   // TODO: добавить другие методы обработки запросов
-  requestJSON<T>(payload: IRequestWrapper): Promise<T> {
+  requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T> {
     const { request, param, query, description, data } = payload;
 
     return this.request<T>({
       request: {
         ...DEFAULT_REQUEST,
         ...request,
+        method: request?.method ?? 'GET', // брать magic string
         body: JSON.stringify(data),
       },
       param,
@@ -79,11 +81,12 @@ export default class AdapterService implements IAdapterService {
     } catch (e) {
       this.logger.error(`${request.method} | '${description}' failed, ${e}`);
 
+      // TODO: добавить обработку ошибок
       return Promise.reject(new Error('Произошла непредвиденная ошибка'));
     }
   }
 
-  private buildEndpoint(param?: string, query?: { [key: string]: string | number }): string {
+  private buildEndpoint(param?: string, query?: { [key: string]: Ref<string | number> | string | number }): string {
     let endpoint = this.API_BASE_URL + this.subdirectory;
 
     if (param) {
@@ -97,9 +100,9 @@ export default class AdapterService implements IAdapterService {
     return endpoint;
   }
 
-  private makeQueryString(query: { [key: string]: string | number }): { [key: string]: string } {
+  private makeQueryString(query: { [key: string]: Ref<string | number> | string | number }): { [key: string]: string } {
     return Object.entries(query).reduce((acc, [key, value]) => {
-      acc[key] = String(value);
+      acc[key] = String(isRef(value) ? value.value : value);
 
       return acc;
     }, {} as { [key: string]: string });

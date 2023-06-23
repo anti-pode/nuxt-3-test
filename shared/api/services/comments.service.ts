@@ -4,24 +4,23 @@ import { Ref } from 'vue';
 import { TYPES } from '@/shared/api/types/types';
 import { IAdapterService } from '~/shared/api/services/adapter.service';
 
-export interface IPost {
-  userId: number;
+export interface IComment {
   id: number;
-  title: string;
+  postId: number;
+  name: string;
+  email: string;
   body: string;
 }
 
-export interface IPostsService {
-  getPage(page: Ref<number> | number): Promise<IPost[]>;
+export interface ICommentsService {
+  get(postId: Ref<number> | number): Promise<IComment[]>;
 }
 
 // TODO: добавить остальные методы
 
-const POSTS_PAGE_LIMIT = 2;
-
 @injectable()
-export default class PostsService implements IPostsService {
-  private readonly name = 'posts';
+export default class CommentsService implements ICommentsService {
+  private readonly name = 'comments';
   private adapter;
 
   constructor(@inject(TYPES.Adapter) adapter: IAdapterService) {
@@ -30,12 +29,12 @@ export default class PostsService implements IPostsService {
     adapter.subdirectory = `${this.name}/`;
   }
 
-  async getPage(page: Ref<number> | number): Promise<IPost[]> {
-    return await this.adapter.requestJSON<IPost[]>({
-      description: 'Получение постов',
+  async get(postId: Ref<number> | number): Promise<IComment[]> {
+    return await this.adapter.requestJSON<IComment[]>({
+      description: 'Получение комментариев',
       query: {
-        _page: page,
-        _limit: POSTS_PAGE_LIMIT,
+        postId,
+        _limit: 5,
       },
     });
   }

@@ -4,4 +4,5 @@ export const TYPES = {
   API: Symbol.for('ApiService'),
   Adapter: Symbol.for('AdapterService'),
   PostsAPIModule: Symbol.for('PostsAPIModule'),
+  CommentsAPIModule: Symbol.for('CommentsAPIModule'),
 };

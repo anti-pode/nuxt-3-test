@@ -1,13 +1,19 @@
 <template>
   <div>
-    <a-button type="primary">Primary Button</a-button>
+    <ul>
+      <li v-for="post in posts" :key="post.id">
+        <p>{{ post.id }}</p>
+        <p>{{ post.title }}</p>
+        <p>{{ post.body }}</p>
 
-    {{ testQuery }}
+        <a-button type="primary" @click="() => (postId = post.id)">get post comments</a-button>
+      </li>
+    </ul>
 
     <br />
     <br />
-    <a-button @click="() => (page += 1)">increase page</a-button>
-    {{ page }}
+
+    {{ comments }}
   </div>
 </template>
 
@@ -16,8 +22,14 @@ import { useAsyncData } from '#app';
 const { $app } = useNuxtApp();
 
 const page = ref(1);
+const postId = ref();
 
-const { data: testQuery } = await useAsyncData('posts', () => $app.api.postsAPI.getPage(page), {
+const { data: posts } = await useAsyncData('posts', () => $app.api.postsAPI.getPage(page), {
   watch: [page],
+});
+
+const { data: comments } = await useAsyncData('comments', () => $app.api.commentsAPI.get(postId), {
+  watch: [postId],
+  immediate: false,
 });
 </script>

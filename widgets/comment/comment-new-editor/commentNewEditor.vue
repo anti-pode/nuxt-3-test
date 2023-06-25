@@ -11,6 +11,8 @@ import { ICommentEditor } from './types';
 import { CommentEditor } from '~/entities/comment';
 import { IComment, IPost } from '~/shared/api';
 
+const config = useRuntimeConfig();
+const { user } = config.public;
 const { $app } = useNuxtApp();
 
 const props = defineProps({
@@ -25,9 +27,8 @@ const emit = defineEmits<{
 }>();
 
 const createComment = async (data: ICommentEditor) => {
-  // TODO: получать name и email из .env
   const { data: responseData } = await useAsyncData('comment-create', () =>
-    $app.api.commentsAPI.create({ ...data, postId: props.post.id, name: 'Тест Тестович', email: 'test@test.ru' })
+    $app.api.commentsAPI.create({ ...data, postId: props.post.id, name: user.name, email: user.email })
   );
 
   emit('created', responseData.value!);

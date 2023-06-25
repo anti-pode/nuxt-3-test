@@ -8,6 +8,9 @@ import { IPostEditor } from './types';
 import { PostEditor } from '~/entities/post';
 import { IPost } from '~/shared/api';
 
+const config = useRuntimeConfig();
+const { user } = config.public;
+
 const { $app } = useNuxtApp();
 
 const emit = defineEmits<{
@@ -16,9 +19,8 @@ const emit = defineEmits<{
 }>();
 
 const createPost = async (data: IPostEditor) => {
-  // TODO: получать userId из .env
   const { data: responseData } = await useAsyncData('post-create', () =>
-    $app.api.postsAPI.create({ ...data, userId: 1 })
+    $app.api.postsAPI.create({ ...data, userId: Number(user.id) })
   );
 
   emit('created', responseData.value!);

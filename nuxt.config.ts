@@ -8,6 +8,12 @@ export default defineNuxtConfig({
     public: {
       apiBaseURL: process.env.API_BASE_URL,
       isProdMode: process.env.NODE_ENV === 'production',
+
+      user: {
+        id: process.env.USER_ID,
+        name: process.env.USER_NAME,
+        email: process.env.USER_EMAIL,
+      },
     },
   },
 

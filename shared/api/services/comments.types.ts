@@ -9,5 +9,5 @@ export interface IComment {
 }
 
 export interface ICommentsService {
-  get(postId: Ref<number> | number): Promise<IComment[]>;
+  get(postId: Ref<number | string> | number | string): Promise<IComment[]>;
 }

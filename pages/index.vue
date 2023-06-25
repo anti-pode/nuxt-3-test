@@ -1,5 +1,7 @@
 <template>
   <div>
+    <NuxtLink to="create"><a-button type="primary">Создать пост</a-button></NuxtLink>
+
     <a-table :row-key="(post) => post.id" :data-source="posts" :columns="columns">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">

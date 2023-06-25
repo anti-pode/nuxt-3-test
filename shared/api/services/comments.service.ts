@@ -7,18 +7,16 @@ import { IComment, ICommentsService, IAdapterService, TYPES } from '~/shared/api
 
 @injectable()
 class CommentsService implements ICommentsService {
-  // private readonly name = 'comments';
+  private readonly name = 'comments';
   private adapter;
 
   constructor(@inject(TYPES.Adapter) adapter: IAdapterService) {
     this.adapter = adapter;
-
-    // TODO: поправить перезатирание поддириктории
-    // adapter.subdirectory = `${this.name}/`;
   }
 
-  async get(postId: Ref<number> | number): Promise<IComment[]> {
+  async get(postId: Ref<number | string> | number | string): Promise<IComment[]> {
     return await this.adapter.requestJSON<IComment[]>({
+      subdirectory: this.name,
       description: 'Получение комментариев',
       query: {
         postId,

@@ -1,6 +1,7 @@
 import { Ref } from 'vue';
 
 export interface IRequestWrapper {
+  subdirectory: string;
   request: Omit<Partial<Request>, 'body'> & { body?: BodyInit };
   param?: Ref<string | number> | string | number;
   query?: { [key: string]: Ref<string | number> | string | number };
@@ -9,12 +10,9 @@ export interface IRequestWrapper {
 }
 
 export interface IRequest extends IRequestWrapper {
-  // TODO: типизировать
-  resolvePayload(response: Response): Promise<any>;
+  resolvePayload<T>(response: Response): Promise<T>;
 }
 
 export interface IAdapterService {
-  subdirectory: string;
-
   requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T>;
 }

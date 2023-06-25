@@ -13,7 +13,6 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
 
 @injectable()
 class AdapterService implements IAdapterService {
-  subdirectory = '';
   private readonly API_BASE_URL;
   readonly logger;
 
@@ -25,8 +24,8 @@ class AdapterService implements IAdapterService {
   }
 
   // TODO: добавить другие методы обработки запросов
-  requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T> {
-    const { request, param, query, description, data } = payload;
+  requestJSON<T>(payload: Partial<IRequestWrapper> & { subdirectory: string }): Promise<T> {
+    const { request, param, query, description, data, subdirectory } = payload;
 
     return this.request<T>({
       request: {
@@ -35,6 +34,7 @@ class AdapterService implements IAdapterService {
         method: request?.method ?? 'GET', // брать magic string
         body: JSON.stringify(data),
       },
+      subdirectory,
       param,
       query,
       description,
@@ -43,24 +43,24 @@ class AdapterService implements IAdapterService {
   }
 
   private async request<T>(payload: IRequest): Promise<T> {
-    const { request, param, query, description, resolvePayload } = payload;
-    const endpoint = this.buildEndpoint(param, query);
+    const { request, param, query, description, subdirectory, resolvePayload } = payload;
+    const endpoint = this.buildEndpoint(subdirectory, param, query);
 
     let response: Response;
     try {
       response = await fetch(endpoint, request);
 
-      if (!response.ok) {
-        this.logger.warn(
+      if (response.ok) {
+        this.logger.log(`${request.method} | ${description} успешно завершено`);
+      } else {
+        this.logger.error(
           `${request.method} | '${description}' завершился с ошибкой, статус ${response.status} / ${response.statusText}`
         );
-      } else {
-        this.logger.log(`${request.method} | ${description} успешно завершено`);
       }
 
       return await resolvePayload(response);
     } catch (e) {
-      this.logger.error(`${request.method} | '${description}' failed, ${e}`);
+      this.logger.error(`${request.method} | '${description}' завершился с ошибкой, ${e}`);
 
       // TODO: добавить обработку ошибок
       return Promise.reject(new Error('Произошла непредвиденная ошибка'));
@@ -68,10 +68,11 @@ class AdapterService implements IAdapterService {
   }
 
   private buildEndpoint(
+    subdirectory: string,
     param?: Ref<string | number> | string | number,
     query?: { [key: string]: Ref<string | number> | string | number }
   ): string {
-    let endpoint = this.API_BASE_URL + this.subdirectory;
+    let endpoint = this.API_BASE_URL + subdirectory;
 
     if (param) {
       endpoint += `/${String(isRef(param) ? param.value : param)}`;

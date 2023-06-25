@@ -15,12 +15,11 @@ class PostsService implements IPostsService {
 
   constructor(@inject(TYPES.Adapter) adapter: IAdapterService) {
     this.adapter = adapter;
-
-    adapter.subdirectory = `${this.name}/`;
   }
 
   async getPage(page: Ref<number> | number): Promise<IPost[]> {
     return await this.adapter.requestJSON<IPost[]>({
+      subdirectory: this.name,
       description: 'Получение постов',
       query: {
         _page: page,
@@ -31,6 +30,7 @@ class PostsService implements IPostsService {
 
   async getById(id: Ref<number | string> | number | string): Promise<IPost> {
     return await this.adapter.requestJSON<IPost>({
+      subdirectory: this.name,
       description: 'Получение поста',
       param: id,
     });
@@ -38,6 +38,7 @@ class PostsService implements IPostsService {
 
   async update(id: Ref<number | string> | number | string, data: IPostUpdate): Promise<IPost> {
     return await this.adapter.requestJSON<IPost>({
+      subdirectory: this.name,
       request: {
         method: 'PUT',
       },
@@ -49,6 +50,7 @@ class PostsService implements IPostsService {
 
   async create(data: IPostCreate): Promise<IPost> {
     return await this.adapter.requestJSON<IPost>({
+      subdirectory: this.name,
       request: {
         method: 'POST',
       },

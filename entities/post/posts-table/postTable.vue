@@ -53,15 +53,12 @@
 
 <script setup lang="ts">
 import { useAsyncData } from '#app';
-import { ColumnsType, TablePaginationConfig } from 'ant-design-vue/es/table';
 import { Ref } from 'vue';
-import { FilterDropdownProps } from 'ant-design-vue/es/table/interface';
-import { FilterValue, SorterResult } from 'ant-design-vue/lib/table/interface';
+import { ColumnsType, SorterResult, TablePaginationConfig, FilterValue, FilterDropdownProps } from './types';
+import { POSTS_PAGE_LIMIT, POSTS_TOTAL } from './constants';
 import { IPost } from '~/shared/api';
-const { $app } = useNuxtApp();
 
-const POSTS_PAGE_LIMIT = 10;
-const POSTS_TOTAL = 100;
+const { $app } = useNuxtApp();
 
 const searchInput: Ref<HTMLInputElement | null> = ref(null);
 const columns: ColumnsType<string> = [

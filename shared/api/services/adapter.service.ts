@@ -96,7 +96,7 @@ class AdapterService implements IAdapterService {
     }
 
     if (query) {
-      endpoint += `?${new URLSearchParams(this.makeQueryString(query)).toString().replace(/%2C/g, ',')}`;
+      endpoint += `?${new URLSearchParams(this.makeQueryString(query))}`;
     }
 
     return endpoint;

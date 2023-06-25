@@ -19,6 +19,8 @@ export type IPostGetPayload = {
   filter?: Ref<[string, string] | null>;
 };
 
+export type { SorterResult };
+
 export enum SortOrder {
   'ascend' = 'asc',
   'descend' = 'desc',

@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
-import { SorterResult } from 'ant-design-vue/es/table/interface';
-import { IPost, IPostCreate, IPostGetPayload, IPostUpdate, SortOrder } from './posts.types';
+import { SorterResult, IPost, IPostCreate, IPostGetPayload, IPostUpdate, SortOrder } from './posts.types';
 import { IAdapterService, IPostsService, Methods, TYPES } from '@/shared/api';
 
 @injectable()
@@ -93,7 +92,7 @@ class PostsService implements IPostsService {
   private formatSort = (
     sort: Ref<SorterResult | SorterResult[] | null>
   ): { _sort: string; _order: 'desc' | 'asc' | '' } => {
-    if (!sort.value) return { _sort: '', _order: 'desc' };
+    if (!sort.value) return { _sort: '', _order: '' };
 
     const sortArray = Array.isArray(sort.value) ? sort.value : [sort.value];
 

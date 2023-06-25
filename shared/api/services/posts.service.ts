@@ -2,9 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
 import { IPost, IPostCreate, IPostUpdate } from './posts.types';
-import { IPostsService, IAdapterService, TYPES } from '@/shared/api';
-
-// TODO: добавить остальные методы
+import { IPostsService, IAdapterService, TYPES, Methods } from '@/shared/api';
 
 const POSTS_PAGE_LIMIT = 2;
 
@@ -40,7 +38,7 @@ class PostsService implements IPostsService {
     return await this.adapter.requestJSON<IPost>({
       subdirectory: this.name,
       request: {
-        method: 'PUT',
+        method: Methods.PUT,
       },
       description: 'Редактирование поста',
       param: id,
@@ -52,10 +50,21 @@ class PostsService implements IPostsService {
     return await this.adapter.requestJSON<IPost>({
       subdirectory: this.name,
       request: {
-        method: 'POST',
+        method: Methods.POST,
       },
       description: 'Создание поста',
       data,
+    });
+  }
+
+  async delete(id: Ref<number | string> | number | string): Promise<null> {
+    return await this.adapter.requestIgnoreResponse({
+      subdirectory: this.name,
+      request: {
+        method: Methods.DELETE,
+      },
+      description: 'Удаление поста',
+      param: id,
     });
   }
 }

@@ -16,4 +16,5 @@ export interface IPostsService {
   getById(id: Ref<number | string> | number | string): Promise<IPost>;
   update(id: Ref<number | string> | number | string, data: IPostUpdate): Promise<IPost>;
   create(data: IPostCreate): Promise<IPost>;
+  delete(id: Ref<number | string> | number | string): Promise<null>;
 }

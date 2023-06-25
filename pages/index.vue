@@ -11,21 +11,16 @@
         </template>
       </template>
     </a-table>
-
-    <br />
-    <br />
-
-    {{ comments }}
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAsyncData } from '#app';
 import { ColumnsType } from 'ant-design-vue/es/table';
+import { Ref } from 'vue';
 const { $app } = useNuxtApp();
 
-const page = ref(1);
-const postId = ref();
+const page: Ref<number> = ref(1);
 
 const columns: ColumnsType<string> = [
   {
@@ -57,12 +52,7 @@ const columns: ColumnsType<string> = [
   },
 ];
 
-const { data: posts } = await useAsyncData('posts', () => $app.api.postsAPI.getPage(page), {
+const { data: posts } = await useAsyncData('posts-get', () => $app.api.postsAPI.getPage(page), {
   watch: [page],
-});
-
-const { data: comments } = await useAsyncData('comments', () => $app.api.commentsAPI.get(postId), {
-  watch: [postId],
-  immediate: false,
 });
 </script>

@@ -14,5 +14,13 @@ export interface IRequest extends IRequestWrapper {
 }
 
 export interface IAdapterService {
-  requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T>;
+  requestJSON<T>(payload: Partial<IRequestWrapper> & { subdirectory: string }): Promise<T>;
+  requestIgnoreResponse(payload: Partial<IRequestWrapper> & { subdirectory: string }): Promise<null>;
+}
+
+export enum Methods {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
 }

@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify';
 import { Ref } from 'vue';
-import { IRequest, IRequestWrapper } from './adapter.types';
+import { IRequest, IRequestWrapper, Methods } from './adapter.types';
 import { ILoggerService, IAdapterService, TYPES } from '@/shared/api';
 
 const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
@@ -23,7 +23,6 @@ class AdapterService implements IAdapterService {
     this.API_BASE_URL = config.public.apiBaseURL;
   }
 
-  // TODO: добавить другие методы обработки запросов
   requestJSON<T>(payload: Partial<IRequestWrapper> & { subdirectory: string }): Promise<T> {
     const { request, param, query, description, data, subdirectory } = payload;
 
@@ -31,14 +30,32 @@ class AdapterService implements IAdapterService {
       request: {
         ...DEFAULT_REQUEST,
         ...request,
-        method: request?.method ?? 'GET', // брать magic string
+        method: request?.method ?? Methods.GET,
         body: JSON.stringify(data),
       },
       subdirectory,
       param,
       query,
       description,
-      resolvePayload: (response: Response) => response.json(),
+      resolvePayload: <T>(response: Response) => response.json() as Promise<T>,
+    });
+  }
+
+  requestIgnoreResponse(payload: Partial<IRequestWrapper> & { subdirectory: string }): Promise<null> {
+    const { request, param, query, description, data, subdirectory } = payload;
+
+    return this.request<null>({
+      request: {
+        ...DEFAULT_REQUEST,
+        ...request,
+        method: request?.method ?? Methods.GET,
+        body: JSON.stringify(data),
+      },
+      subdirectory,
+      param,
+      query,
+      description,
+      resolvePayload: <T>(_response: Response) => Promise.resolve(null) as Promise<T>,
     });
   }
 

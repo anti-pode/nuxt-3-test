@@ -9,6 +9,7 @@ export type { IPost } from './services/posts.types';
 export type { IComment } from './services/comments.types';
 
 export { TYPES } from './types/types';
+export { Methods } from './services/adapter.types';
 
 export { ApiService } from './services/api.service';
 export { LoggerService } from './services/logger.service';

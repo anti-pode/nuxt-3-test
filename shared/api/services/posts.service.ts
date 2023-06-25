@@ -1,10 +1,8 @@
 import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
-import { IPost, IPostCreate, IPostUpdate } from './posts.types';
+import { IPost, IPostCreate, IPostGetPayload, IPostUpdate } from './posts.types';
 import { IPostsService, IAdapterService, TYPES, Methods } from '@/shared/api';
-
-const POSTS_PAGE_LIMIT = 2;
 
 @injectable()
 class PostsService implements IPostsService {
@@ -15,14 +13,22 @@ class PostsService implements IPostsService {
     this.adapter = adapter;
   }
 
-  async getPage(page: Ref<number> | number): Promise<IPost[]> {
+  async get(payload: IPostGetPayload): Promise<IPost[]> {
+    const query: { [key: string]: Ref<string | number> | string | number } = {
+      _page: payload.page,
+      _limit: payload.limit,
+    };
+
+    if (payload.filter?.value) {
+      const [dataIndex, value] = this.formatFilter(payload.filter);
+
+      query[dataIndex] = value;
+    }
+
     return await this.adapter.requestJSON<IPost[]>({
       subdirectory: this.name,
       description: 'Получение постов',
-      query: {
-        _page: page,
-        _limit: POSTS_PAGE_LIMIT,
-      },
+      query,
     });
   }
 
@@ -67,6 +73,14 @@ class PostsService implements IPostsService {
       param: id,
     });
   }
+
+  private formatFilter = (filter: Ref<[string, string] | null>): [string, string] => {
+    if (!(filter.value && filter.value[0] && filter.value[1])) return ['', ''];
+
+    const [dataIndex, value] = filter.value;
+
+    return [`${dataIndex}_like`, value];
+  };
 }
 
 export { PostsService };

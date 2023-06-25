@@ -40,14 +40,16 @@
       </template>
     </a-table>
 
-    <a-pagination
-      v-model:current="currentPage"
-      :total="POSTS_TOTAL"
-      :default-page-size="POSTS_PAGE_LIMIT"
-      :show-size-changer="false"
-      show-less-items
-      @change="fetchTableData"
-    />
+    <footer class="pagination-wrapper">
+      <a-pagination
+        v-model:current="currentPage"
+        :total="POSTS_TOTAL"
+        :default-page-size="POSTS_PAGE_LIMIT"
+        :show-size-changer="false"
+        show-less-items
+        @change="fetchTableData"
+      />
+    </footer>
   </div>
 </template>
 
@@ -157,3 +159,11 @@ const handleReset = (
 
 await fetchTableData();
 </script>
+
+<style lang="scss">
+.pagination-wrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <PostNewEditor @created="navigateToPost" />
+  <PostNewEditor @created="navigateToPost" @cancel="goToPosts" />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +15,12 @@ const navigateToPost = (data: IPost) => {
     params: {
       postId: data.id,
     },
+  });
+};
+
+const goToPosts = () => {
+  router.push({
+    path: '/',
   });
 };
 </script>

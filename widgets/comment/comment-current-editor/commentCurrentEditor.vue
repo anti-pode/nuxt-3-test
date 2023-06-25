@@ -1,7 +1,5 @@
 <template>
-  <CommentEditor :comment="comment" @submit="createComment" />
-
-  <a-button @click="cancelEdit">Отменить</a-button>
+  <CommentEditor :comment="comment" @submit="createComment" @cancel="cancelEdit" />
 </template>
 
 <script setup lang="ts">

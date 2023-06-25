@@ -1,6 +1,11 @@
 <template>
-  <div v-for="comment in currentComments" :key="comment.id">
-    <CommentPreview v-if="comment.id !== currentEditorCommentId" :comment="comment" @deleted="handleCommentDelete" />
+  <a-card v-for="comment in currentComments" :key="comment.id" class="card" size="small">
+    <CommentPreview
+      v-if="comment.id !== currentEditorCommentId"
+      :comment="comment"
+      @deleted="handleCommentDelete"
+      @edit="currentEditorCommentId = comment.id"
+    />
     <CommentCurrentEditor
       v-else
       :post="post"
@@ -8,14 +13,7 @@
       @canceled="handleCancelEdit"
       @updated="handleCommentUpdate"
     />
-
-    <a-button
-      v-if="comment.id !== currentEditorCommentId"
-      type="primary"
-      @click="() => (currentEditorCommentId = comment.id)"
-      >Редактировать</a-button
-    >
-  </div>
+  </a-card>
 </template>
 
 <script setup lang="ts">
@@ -57,3 +55,15 @@ const handleCommentDelete = (comment: IComment) => {
   currentComments.value?.splice(deleteCommentIndex, 1);
 };
 </script>
+
+<style lang="scss" scoped>
+.card {
+  & + & {
+    margin-top: 20px;
+  }
+}
+
+.edit-button {
+  margin-right: 10px;
+}
+</style>

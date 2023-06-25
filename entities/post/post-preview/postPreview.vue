@@ -1,12 +1,17 @@
 <template>
-  <ul>
-    <li>id: {{ post.id }}</li>
-    <li>userId: {{ post.userId }}</li>
-    <li>title: {{ post.title }}</li>
-    <li>body: {{ post.body }}</li>
-  </ul>
+  <article>
+    <ul>
+      <li>id: {{ post.id }}</li>
+      <li>userId: {{ post.userId }}</li>
+      <li>title: {{ post.title }}</li>
+      <li>body: {{ post.body }}</li>
+    </ul>
 
-  <a-button type="default" @click="deleteCurrentPost">Удалить</a-button>
+    <footer class="post-actions">
+      <a-button type="default" @click="deleteCurrentPost">Удалить</a-button>
+      <a-button type="primary" @click="editCurrentPost">Редактировать</a-button>
+    </footer>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -22,11 +27,22 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['deleted']);
+const emit = defineEmits(['deleted', 'edit']);
 
 const deleteCurrentPost = async () => {
   await useAsyncData('post-delete', () => $app.api.postsAPI.delete(props.post.id));
 
   emit('deleted');
 };
+
+const editCurrentPost = () => {
+  emit('edit');
+};
 </script>
+
+<style lang="scss" scoped>
+.post-actions {
+  display: flex;
+  column-gap: 10px;
+}
+</style>

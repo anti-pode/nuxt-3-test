@@ -1,10 +1,11 @@
 <template>
-  <div>
-    <NuxtLayout>
-      <NuxtLoadingIndicator />
+  <NuxtLayout>
+    <NuxtLoadingIndicator />
+
+    <main class="app-wrapper">
       <NuxtPage />
-    </NuxtLayout>
-  </div>
+    </main>
+  </NuxtLayout>
 </template>
 
 <script lang="ts" setup>
@@ -19,3 +20,9 @@ useSeoMeta({
   description,
 });
 </script>
+
+<style lang="scss">
+.app-wrapper {
+  padding: 20px;
+}
+</style>

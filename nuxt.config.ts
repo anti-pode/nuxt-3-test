@@ -16,4 +16,6 @@ export default defineNuxtConfig({
       nitro.options.moduleSideEffects.push('reflect-metadata');
     },
   },
+
+  css: ['@/app/styles/global.scss'],
 });

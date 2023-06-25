@@ -1,0 +1,28 @@
+.ant-table {
+  .ant-table-thead {
+    .ant-table-column-title {
+      white-space: nowrap;
+    }
+  }
+}
+
+.ant-form-vertical {
+  .ant-form-item {
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .ant-col {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .ant-form-item-control {
+      margin-left: 0;
+    }
+  }
+}
+
+ul {
+  padding-left: 20px;
+}

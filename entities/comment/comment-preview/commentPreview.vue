@@ -1,13 +1,18 @@
 <template>
-  <ul>
-    <li>id: {{ comment.id }}</li>
-    <li>postId: {{ comment.postId }}</li>
-    <li>name: {{ comment.name }}</li>
-    <li>email: {{ comment.email }}</li>
-    <li>body: {{ comment.body }}</li>
-  </ul>
+  <article>
+    <ul>
+      <li>id: {{ comment.id }}</li>
+      <li>postId: {{ comment.postId }}</li>
+      <li>name: {{ comment.name }}</li>
+      <li>email: {{ comment.email }}</li>
+      <li>body: {{ comment.body }}</li>
+    </ul>
 
-  <a-button type="default" @click="deleteCurrentComment">Удалить</a-button>
+    <footer class="comment-actions">
+      <a-button type="default" @click="deleteCurrentComment">Удалить</a-button>
+      <a-button type="primary" @click="editCurrentComment">Редактировать</a-button>
+    </footer>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -26,6 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   deleted: [comment: IComment];
+  edit: [comment: IComment];
 }>();
 
 const deleteCurrentComment = async () => {
@@ -33,4 +39,15 @@ const deleteCurrentComment = async () => {
 
   emit('deleted', props.comment);
 };
+
+const editCurrentComment = () => {
+  emit('edit', props.comment);
+};
 </script>
+
+<style lang="scss" scoped>
+.comment-actions {
+  display: flex;
+  column-gap: 10px;
+}
+</style>

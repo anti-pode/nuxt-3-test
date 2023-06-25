@@ -1,9 +1,10 @@
 <template>
   <a-form
     :model="formState"
-    name="basic"
     :label-col="{ span: 8 }"
     :wrapper-col="{ span: 16 }"
+    layout="vertical"
+    name="basic"
     autocomplete="off"
     @finish="onSubmit"
   >
@@ -16,7 +17,10 @@
     </a-form-item>
 
     <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-      <a-button type="primary" html-type="submit">Отправить</a-button>
+      <footer class="form-footer">
+        <a-button type="default" @click="onCancel">Отменить</a-button>
+        <a-button type="primary" html-type="submit">Отправить</a-button>
+      </footer>
     </a-form-item>
   </a-form>
 </template>
@@ -37,6 +41,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   submit: [data: IPostEditor];
+  cancel: [void];
 }>();
 
 const formState = reactive<IPostEditor>({
@@ -47,4 +52,15 @@ const formState = reactive<IPostEditor>({
 const onSubmit = (data: IPostEditor) => {
   emit('submit', data);
 };
+
+const onCancel = () => {
+  emit('cancel');
+};
 </script>
+
+<style lang="scss" scoped>
+.form-footer {
+  display: flex;
+  column-gap: 10px;
+}
+</style>

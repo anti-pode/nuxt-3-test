@@ -1,5 +1,7 @@
 <template>
-  <CommentEditor @submit="createComment" />
+  <a-card size="small" class="card">
+    <CommentEditor hide-cancel-button @submit="createComment" />
+  </a-card>
 </template>
 
 <script setup lang="ts">
@@ -31,3 +33,9 @@ const createComment = async (data: ICommentEditor) => {
   emit('created', responseData.value!);
 };
 </script>
+
+<style lang="scss" scoped>
+.card {
+  margin: 20px 0 40px 0;
+}
+</style>

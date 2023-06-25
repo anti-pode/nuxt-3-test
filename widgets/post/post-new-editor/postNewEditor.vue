@@ -1,5 +1,5 @@
 <template>
-  <PostEditor @submit="createPost" />
+  <PostEditor @submit="createPost" @cancel="onCancel" />
 </template>
 
 <script setup lang="ts">
@@ -12,6 +12,7 @@ const { $app } = useNuxtApp();
 
 const emit = defineEmits<{
   created: [data: IPost];
+  cancel: [void];
 }>();
 
 const createPost = async (data: IPostEditor) => {
@@ -21,5 +22,9 @@ const createPost = async (data: IPostEditor) => {
   );
 
   emit('created', responseData.value!);
+};
+
+const onCancel = () => {
+  emit('cancel');
 };
 </script>

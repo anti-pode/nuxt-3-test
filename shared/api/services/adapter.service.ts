@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Ref } from 'vue';
-import { TYPES } from '~/shared/api/types/types';
-import { ILoggerService } from '~/shared/api/services/logger.service';
+import { IRequest, IRequestWrapper } from './adapter.types';
+import { ILoggerService, IAdapterService, TYPES } from '@/shared/api';
 
 const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
   cache: 'no-cache',
@@ -11,27 +11,8 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
   }),
 };
 
-interface IRequestWrapper {
-  request: Omit<Partial<Request>, 'body'> & { body?: BodyInit };
-  param?: string;
-  query?: { [key: string]: Ref<string | number> | string | number };
-  description?: string;
-  data?: unknown;
-}
-
-interface IRequest extends IRequestWrapper {
-  // TODO: типизировать
-  resolvePayload(response: Response): Promise<any>;
-}
-
-export interface IAdapterService {
-  subdirectory: string;
-
-  requestJSON<T>(payload: Partial<IRequestWrapper>): Promise<T>;
-}
-
 @injectable()
-export default class AdapterService implements IAdapterService {
+class AdapterService implements IAdapterService {
   subdirectory = '';
   private readonly API_BASE_URL;
   readonly logger;
@@ -74,7 +55,7 @@ export default class AdapterService implements IAdapterService {
           `${request.method} | '${description}' завершился с ошибкой, статус ${response.status} / ${response.statusText}`
         );
       } else {
-        this.logger.log(`${request.method} | ${description} успешно завершен`);
+        this.logger.log(`${request.method} | ${description} успешно завершено`);
       }
 
       return await resolvePayload(response);
@@ -86,11 +67,14 @@ export default class AdapterService implements IAdapterService {
     }
   }
 
-  private buildEndpoint(param?: string, query?: { [key: string]: Ref<string | number> | string | number }): string {
+  private buildEndpoint(
+    param?: Ref<string | number> | string | number,
+    query?: { [key: string]: Ref<string | number> | string | number }
+  ): string {
     let endpoint = this.API_BASE_URL + this.subdirectory;
 
     if (param) {
-      endpoint += `/${param}`;
+      endpoint += `/${String(isRef(param) ? param.value : param)}`;
     }
 
     if (query) {
@@ -108,3 +92,5 @@ export default class AdapterService implements IAdapterService {
     }, {} as { [key: string]: string });
   }
 }
+
+export { AdapterService };

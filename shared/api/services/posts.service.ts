@@ -1,26 +1,15 @@
 import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
-import { TYPES } from '@/shared/api/types/types';
-import { IAdapterService } from '~/shared/api/services/adapter.service';
-
-export interface IPost {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
-
-export interface IPostsService {
-  getPage(page: Ref<number> | number): Promise<IPost[]>;
-}
+import { IPost, IPostCreate, IPostUpdate } from './posts.types';
+import { IPostsService, IAdapterService, TYPES } from '@/shared/api';
 
 // TODO: добавить остальные методы
 
 const POSTS_PAGE_LIMIT = 2;
 
 @injectable()
-export default class PostsService implements IPostsService {
+class PostsService implements IPostsService {
   private readonly name = 'posts';
   private adapter;
 
@@ -39,4 +28,34 @@ export default class PostsService implements IPostsService {
       },
     });
   }
+
+  async getById(id: Ref<number | string> | number | string): Promise<IPost> {
+    return await this.adapter.requestJSON<IPost>({
+      description: 'Получение поста',
+      param: id,
+    });
+  }
+
+  async update(id: Ref<number | string> | number | string, data: IPostUpdate): Promise<IPost> {
+    return await this.adapter.requestJSON<IPost>({
+      request: {
+        method: 'PUT',
+      },
+      description: 'Редактирование поста',
+      param: id,
+      data,
+    });
+  }
+
+  async create(data: IPostCreate): Promise<IPost> {
+    return await this.adapter.requestJSON<IPost>({
+      request: {
+        method: 'POST',
+      },
+      description: 'Создание поста',
+      data,
+    });
+  }
 }
+
+export { PostsService };

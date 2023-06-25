@@ -1,13 +1,15 @@
 import 'reflect-metadata';
 import { ContainerModule, interfaces, Container } from 'inversify';
 
-import { TYPES } from '@/shared/api/types/types';
-import AppService from '@/shared/api/services/app.service';
-import LoggerService from '@/shared/api/services/logger.service';
-import ApiService from '@/shared/api/services/api.service';
-import PostsService from '@/shared/api/services/posts.service';
-import AdapterService from '@/shared/api/services/adapter.service';
-import CommentsService from '@/shared/api/services/comments.service';
+import {
+  TYPES,
+  AppService,
+  LoggerService,
+  ApiService,
+  PostsService,
+  AdapterService,
+  CommentsService,
+} from '@/shared/api';
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
   bind(TYPES.Application).to(AppService).inSingletonScope();

@@ -1,19 +1,11 @@
 /* eslint-disable no-console */
 
 import { injectable } from 'inversify';
-
-type availableConsoleTypes = string | number;
-
-export interface ILoggerService {
-  readonly isProdMode: boolean;
-
-  log(value: availableConsoleTypes, ...rest: availableConsoleTypes[]): void;
-  error(error: availableConsoleTypes): void;
-  warn(value: availableConsoleTypes, ...rest: availableConsoleTypes[]): void;
-}
+import { availableConsoleTypes } from './logger.types';
+import { ILoggerService } from '@/shared/api';
 
 @injectable()
-export default class LoggerService implements ILoggerService {
+class LoggerService implements ILoggerService {
   readonly isProdMode;
 
   constructor() {
@@ -40,5 +32,7 @@ export default class LoggerService implements ILoggerService {
     }
   }
 }
+
+export { LoggerService };
 
 /* eslint-enable no-console */

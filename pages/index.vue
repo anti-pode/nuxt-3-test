@@ -1,14 +1,14 @@
 <template>
   <div>
-    <ul>
-      <li v-for="post in posts" :key="post.id">
-        <p>{{ post.id }}</p>
-        <p>{{ post.title }}</p>
-        <p>{{ post.body }}</p>
-
-        <a-button type="primary" @click="() => (postId = post.id)">get post comments</a-button>
-      </li>
-    </ul>
+    <a-table :row-key="(post) => post.id" :data-source="posts" :columns="columns">
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <span>
+            <NuxtLink :to="`/${record.id}`">Смотреть</NuxtLink>
+          </span>
+        </template>
+      </template>
+    </a-table>
 
     <br />
     <br />
@@ -19,10 +19,41 @@
 
 <script setup lang="ts">
 import { useAsyncData } from '#app';
+import { ColumnsType } from 'ant-design-vue/es/table';
 const { $app } = useNuxtApp();
 
 const page = ref(1);
 const postId = ref();
+
+const columns: ColumnsType<string> = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    sorter: true,
+  },
+  {
+    title: 'ID пользователя',
+    dataIndex: 'userId',
+    key: 'userId',
+    sorter: true,
+  },
+  {
+    title: 'Название',
+    dataIndex: 'title',
+    key: 'title',
+    sorter: true,
+  },
+  {
+    title: 'Краткое содержание',
+    dataIndex: 'body',
+    key: 'body',
+  },
+  {
+    title: '',
+    key: 'action',
+  },
+];
 
 const { data: posts } = await useAsyncData('posts', () => $app.api.postsAPI.getPage(page), {
   watch: [page],

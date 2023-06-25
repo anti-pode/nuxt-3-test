@@ -1,16 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { TYPES } from '@/shared/api/types/types';
-import { ILoggerService } from '@/shared/api/services/logger.service';
-import { IApiService } from '~/shared/api/services/api.service';
-
-interface IAppService {
-  readonly logger: ILoggerService;
-
-  init(): void;
-}
+import { ILoggerService, IApiService, IAppService, TYPES } from '@/shared/api';
 
 @injectable()
-export default class AppService implements IAppService {
+class AppService implements IAppService {
   readonly logger;
   readonly api;
 
@@ -23,3 +15,5 @@ export default class AppService implements IAppService {
     this.logger.log('Контейнер приложения запущен');
   }
 }
+
+export { AppService };

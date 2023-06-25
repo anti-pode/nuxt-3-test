@@ -1,8 +1,9 @@
 import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
-import { IPost, IPostCreate, IPostGetPayload, IPostUpdate } from './posts.types';
-import { IPostsService, IAdapterService, TYPES, Methods } from '@/shared/api';
+import { SorterResult } from 'ant-design-vue/es/table/interface';
+import { IPost, IPostCreate, IPostGetPayload, IPostUpdate, SortOrder } from './posts.types';
+import { IAdapterService, IPostsService, Methods, TYPES } from '@/shared/api';
 
 @injectable()
 class PostsService implements IPostsService {
@@ -23,6 +24,13 @@ class PostsService implements IPostsService {
       const [dataIndex, value] = this.formatFilter(payload.filter);
 
       query[dataIndex] = value;
+    }
+
+    if (payload.sort?.value) {
+      const { _sort, _order } = this.formatSort(payload.sort);
+
+      query._sort = _sort;
+      query._order = _order;
     }
 
     return await this.adapter.requestJSON<IPost[]>({
@@ -80,6 +88,26 @@ class PostsService implements IPostsService {
     const [dataIndex, value] = filter.value;
 
     return [`${dataIndex}_like`, value];
+  };
+
+  private formatSort = (
+    sort: Ref<SorterResult | SorterResult[] | null>
+  ): { _sort: string; _order: 'desc' | 'asc' | '' } => {
+    if (!sort.value) return { _sort: '', _order: 'desc' };
+
+    const sortArray = Array.isArray(sort.value) ? sort.value : [sort.value];
+
+    return sortArray.reduce(
+      (acc, { columnKey, order }) => {
+        if (columnKey && order) {
+          acc._sort += acc._sort ? `,${String(columnKey)}` : String(columnKey);
+          acc._order += acc._order ? `,${SortOrder[order]}` : SortOrder[order];
+        }
+
+        return acc;
+      },
+      { _sort: '', _order: '' } as { _sort: string; _order: 'desc' | 'asc' | '' }
+    );
   };
 }
 

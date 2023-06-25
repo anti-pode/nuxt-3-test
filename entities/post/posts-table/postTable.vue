@@ -1,57 +1,62 @@
 <template>
-  <a-table
-    v-if="currentPost"
-    :row-key="(post) => post.id"
-    :data-source="currentPost"
-    :columns="columns"
-    :pagination="false"
-  >
-    <template #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, column, clearFilters }">
-      <div style="padding: 8px">
-        <a-input
-          ref="searchInput"
-          placeholder="Поиск по названию"
-          :value="selectedKeys[0]"
-          style="width: 188px; margin-bottom: 8px; display: block"
-          @change="(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-          @press-enter="handleSearch(selectedKeys, column.dataIndex, confirm)"
-        />
-        <a-button
-          type="primary"
-          size="small"
-          style="width: 90px; margin-right: 8px"
-          @click="handleSearch(selectedKeys, column.dataIndex, confirm)"
-        >
-          Найти
-        </a-button>
-        <a-button size="small" style="width: 90px" @click="handleReset(clearFilters, confirm)">Сбросить</a-button>
-      </div>
-    </template>
-
-    <template #bodyCell="{ column, record }">
-      <template v-if="column.key === 'action'">
-        <span>
-          <NuxtLink :to="`/${record.id}`">Смотреть</NuxtLink>
-        </span>
+  <div v-if="currentPosts">
+    <a-table
+      :row-key="(post) => post.id"
+      :data-source="currentPosts"
+      :columns="columns"
+      :pagination="false"
+      @change="handleSort"
+    >
+      <template #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, column, clearFilters }">
+        <div style="padding: 8px">
+          <a-input
+            ref="searchInput"
+            placeholder="Поиск по названию"
+            :value="selectedKeys[0]"
+            style="width: 188px; margin-bottom: 8px; display: block"
+            @change="(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+            @press-enter="() => handleSearch(selectedKeys, column.dataIndex, confirm)"
+          />
+          <a-button
+            type="primary"
+            size="small"
+            style="width: 90px; margin-right: 8px"
+            @click="() => handleSearch(selectedKeys, column.dataIndex, confirm)"
+          >
+            Найти
+          </a-button>
+          <a-button size="small" style="width: 90px" @click="() => handleReset(clearFilters, confirm)"
+            >Сбросить</a-button
+          >
+        </div>
       </template>
-    </template>
-  </a-table>
 
-  <a-pagination
-    v-model:current="currentPage"
-    :total="POSTS_TOTAL"
-    :default-page-size="POSTS_PAGE_LIMIT"
-    :show-size-changer="false"
-    show-less-items
-    @change="fetchTableData"
-  />
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <span>
+            <NuxtLink :to="`/${record.id}`">Смотреть</NuxtLink>
+          </span>
+        </template>
+      </template>
+    </a-table>
+
+    <a-pagination
+      v-model:current="currentPage"
+      :total="POSTS_TOTAL"
+      :default-page-size="POSTS_PAGE_LIMIT"
+      :show-size-changer="false"
+      show-less-items
+      @change="fetchTableData"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useAsyncData } from '#app';
-import { ColumnsType } from 'ant-design-vue/es/table';
+import { ColumnsType, TablePaginationConfig } from 'ant-design-vue/es/table';
 import { Ref } from 'vue';
 import { FilterDropdownProps } from 'ant-design-vue/es/table/interface';
+import { FilterValue, SorterResult } from 'ant-design-vue/lib/table/interface';
 import { IPost } from '~/shared/api';
 const { $app } = useNuxtApp();
 
@@ -64,19 +69,25 @@ const columns: ColumnsType<string> = [
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
-    sorter: true,
+    sorter: {
+      multiple: 3,
+    },
   },
   {
     title: 'ID пользователя',
     dataIndex: 'userId',
     key: 'userId',
-    sorter: true,
+    sorter: {
+      multiple: 2,
+    },
   },
   {
     title: 'Название',
     dataIndex: 'title',
     key: 'title',
-    sorter: true,
+    sorter: {
+      multiple: 1,
+    },
     customFilterDropdown: true,
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -96,8 +107,20 @@ const columns: ColumnsType<string> = [
 ];
 
 const currentPage: Ref<number> = ref(1);
-const currentPost: Ref<IPost[] | null> = ref(null);
+const currentPosts: Ref<IPost[] | null> = ref(null);
 const currentFilter: Ref<[string, string] | null> = ref(null);
+const currentSort: Ref<SorterResult | SorterResult[] | null> = ref(null);
+
+const handleSort = (
+  _pagination: TablePaginationConfig,
+  _filters: Record<string, FilterValue | null>,
+  sorter: SorterResult | SorterResult[]
+) => {
+  currentSort.value = sorter;
+  currentPage.value = 1;
+
+  fetchTableData();
+};
 
 const fetchTableData = async () => {
   const { data } = await useAsyncData('posts-get', () =>
@@ -105,10 +128,11 @@ const fetchTableData = async () => {
       page: currentPage,
       limit: POSTS_PAGE_LIMIT,
       filter: currentFilter,
+      sort: currentSort,
     })
   );
 
-  currentPost.value = data.value;
+  currentPosts.value = data.value;
 };
 
 const handleSearch = ([selectedKey]: [string], dataIndex: string, confirm: FilterDropdownProps<IPost>['confirm']) => {
@@ -134,5 +158,5 @@ const handleReset = (
   fetchTableData();
 };
 
-fetchTableData();
+await fetchTableData();
 </script>

@@ -8,6 +8,7 @@ import { IPost } from '@/shared/api';
 
 const router = useRouter();
 
+// вернет на пустую страницу, так как на сервере данные не изменяются
 const navigateToPost = (data: IPost) => {
   router.push({
     name: 'postId',

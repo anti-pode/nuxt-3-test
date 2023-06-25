@@ -14,7 +14,7 @@ const DEFAULT_REQUEST: Pick<Request, 'cache' | 'headers'> = {
 @injectable()
 class AdapterService implements IAdapterService {
   private readonly API_BASE_URL;
-  readonly logger;
+  private readonly logger;
 
   constructor(@inject(TYPES.Logger) logger: ILoggerService) {
     this.logger = logger;

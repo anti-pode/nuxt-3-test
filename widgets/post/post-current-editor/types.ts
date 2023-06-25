@@ -1,2 +1,2 @@
-export { IPostEditor } from '~/entities/post';
-export { IPost } from '@/shared/api';
+export type { IPostEditor } from '~/entities/post';
+export type { IPost } from '@/shared/api';

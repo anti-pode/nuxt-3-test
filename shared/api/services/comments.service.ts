@@ -1,10 +1,8 @@
 import { inject, injectable } from 'inversify';
 
 import { Ref } from 'vue';
-import { ICommentCreate } from './comments.types';
+import { ICommentCreate, ICommentUpdate } from './comments.types';
 import { IComment, ICommentsService, IAdapterService, TYPES, Methods } from '~/shared/api';
-
-// TODO: добавить остальные методы
 
 @injectable()
 class CommentsService implements ICommentsService {
@@ -24,6 +22,25 @@ class CommentsService implements ICommentsService {
         _sort: 'id',
         _order: 'desc',
       },
+    });
+  }
+
+  async update(
+    postId: Ref<number | string> | number | string,
+    id: Ref<number | string> | number | string,
+    data: ICommentUpdate
+  ): Promise<IComment> {
+    return await this.adapter.requestJSON<IComment>({
+      subdirectory: this.name,
+      request: {
+        method: Methods.PUT,
+      },
+      description: 'Редактирование комментария',
+      param: id,
+      query: {
+        postId,
+      },
+      data,
     });
   }
 

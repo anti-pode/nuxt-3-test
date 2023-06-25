@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { PropType } from 'vue';
 import { TCommentPreview } from './types';
+import { IComment } from '~/shared/api';
 
 const { $app } = useNuxtApp();
 
@@ -23,11 +24,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['deleted']);
+const emit = defineEmits<{
+  deleted: [comment: IComment];
+}>();
 
 const deleteCurrentComment = async () => {
   await useAsyncData('comment-delete', () => $app.api.commentsAPI.delete(props.comment.id));
 
-  emit('deleted');
+  emit('deleted', props.comment);
 };
 </script>

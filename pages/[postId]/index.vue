@@ -7,7 +7,7 @@
     <a-button v-if="mode === Mode.Edit" type="default" @click="() => (mode = Mode.Preview)">Отменить</a-button>
 
     <CommentNewEditor :post="post" @created="addNewComment" />
-    <CommentsList :comments="comments" />
+    <CommentsList :post="post" :comments="comments" />
   </div>
 </template>
 
@@ -16,8 +16,8 @@ import { useAsyncData } from '#app';
 import { Ref } from 'vue';
 import { PostPreview } from '@/entities/post';
 import { PostCurrentEditor } from '@/widgets/post';
-import { IComment, IPost } from '@/shared/api';
 import { CommentsList, CommentNewEditor } from '~/widgets/comment';
+import { IComment, IPost } from '@/shared/api';
 
 const { $app } = useNuxtApp();
 const route = useRoute();

@@ -7,11 +7,7 @@
     autocomplete="off"
     @finish="onSubmit"
   >
-    <a-form-item label="Название поста" name="title" :rules="[{ required: true, message: 'Добавьте название!' }]">
-      <a-input v-model:value="formState.title" />
-    </a-form-item>
-
-    <a-form-item label="Содержание поста" name="body" :rules="[{ required: true, message: 'Добавьте содержание!' }]">
+    <a-form-item label="Текст комментария" name="body" :rules="[{ required: true, message: 'Добавьте текст!' }]">
       <a-textarea v-model:value="formState.body" />
     </a-form-item>
 
@@ -23,28 +19,26 @@
 
 <script setup lang="ts">
 import { PropType } from 'vue';
-import { IPostEditor } from './types';
+import { ICommentEditor } from './types';
 
 const props = defineProps({
-  post: {
-    type: Object as PropType<IPostEditor>,
+  comment: {
+    type: Object as PropType<ICommentEditor>,
     default: () => ({
-      title: '',
       body: '',
     }),
   },
 });
 
 const emit = defineEmits<{
-  submit: [data: IPostEditor];
+  submit: [data: ICommentEditor];
 }>();
 
-const formState = reactive<IPostEditor>({
-  title: props.post.title,
-  body: props.post.body,
+const formState = reactive<ICommentEditor>({
+  body: props.comment.body,
 });
 
-const onSubmit = (data: IPostEditor) => {
+const onSubmit = (data: ICommentEditor) => {
   emit('submit', data);
 };
 </script>

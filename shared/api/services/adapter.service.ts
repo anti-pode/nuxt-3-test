@@ -71,16 +71,15 @@ class AdapterService implements IAdapterService {
         this.logger.log(`${request.method} | ${description} успешно завершено`);
       } else {
         this.logger.error(
-          `${request.method} | '${description}' завершился с ошибкой, статус ${response.status} / ${response.statusText}`
+          `${request.method} | '${description}' завершилось с ошибкой, статус ${response.status} ${response.statusText}`
         );
       }
 
       return await resolvePayload(response);
     } catch (e) {
-      this.logger.error(`${request.method} | '${description}' завершился с ошибкой, ${e}`);
+      this.logger.error(`${request.method} | '${description}' завершилось с ошибкой, ${e}`);
 
-      // TODO: добавить обработку ошибок
-      return Promise.reject(new Error('Произошла непредвиденная ошибка'));
+      return Promise.reject(new Error(`Произошла непредвиденная ошибка! Подробнее: ${e}`));
     }
   }
 
